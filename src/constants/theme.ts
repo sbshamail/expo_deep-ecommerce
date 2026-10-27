@@ -11,6 +11,9 @@ export const lightColors = {
   primary: '#18181b',
   primaryForeground: '#fafafa',
   destructive: '#dc2626',
+  success: '#16a34a',
+  warning: '#d97706',
+  info: '#2563eb',
 } as const;
 
 export type ColorTokens = { [K in keyof typeof lightColors]: string };
@@ -26,6 +29,9 @@ export const darkColors: ColorTokens = {
   primary: '#fafafa',
   primaryForeground: '#18181b',
   destructive: '#ef4444',
+  success: '#22c55e',
+  warning: '#f59e0b',
+  info: '#60a5fa',
 };
 
 export const Spacing = { xs: 4, sm: 8, md: 16, lg: 24, xl: 32 } as const;

@@ -50,7 +50,7 @@ src/
 ├── app/            Expo Router — each file IS the screen (compose it from common/ + components/)
 │   ├── _layout.tsx        <AppProviders> + auth guard (Stack.Protected) + splash hide
 │   ├── (auth)/            signed-out routes  → index (= sign-in, URL "/"), register, forgot-password (OTP reset)
-│   └── (dashboard)/       signed-in routes   → index.tsx
+│   └── (dashboard)/       signed-in routes   → (tabs)/ (home, products, orders, questions, more) + pushed screens: product/[id], stock/[id], order/[id], categories, category/[id], blogs, blog/[id] (`[id]` = "new" creates)
 ├── common/         Screen-specific pieces, grouped by screen: common/<screen>/Foo.tsx
 │                   (knows auth/shop/domain; NOT reusable elsewhere)
 ├── components/     Reusable, domain-free UI used by any screen
@@ -84,3 +84,12 @@ src/
 - Auth flows (all via `src/api/auth.ts`): `POST /login`, `POST /register` (region fields omitted → backend defaults), `POST /otp-send-email?email=` then `POST /reset-password`, `POST /refresh?refresh_token=` (used once on app start if the stored access token 401s). Auth screens share `common/auth/AuthLayout`. A network failure on launch does NOT sign the user out; only a server rejection does.
 - Backend login flow: `POST /login {identifier,password}` → `{access_token, refresh_token, user}`; current user: `GET /user/read` (raw, unwrapped).
 - Verify with `npx tsc --noEmit` and `npx expo export --platform android` (bundle check). `expo lint` needs eslint installed first (not yet set up).
+
+### Dashboard screens (mirror of the web admin)
+
+- **Lists** load with `hooks/useFetch` (token + refetch on focus + pull-to-refresh; errors show as an inline `ErrorBanner`, never replace the screen). Search/filter chips run on the device over the loaded rows (max 200, like the web tables).
+- **Forms** (`common/product|category|blog/*Form.tsx`) are one component for create + edit, wrapped in `FormScreen` (pinned Save button). Multipart bodies go through `FormData`; picked photos use `lib/images.ts` (`{uri,name,type}` parts — RN's FormData, not `File`).
+- **Products**: `product/update` only changes fields it receives, but text fields default to `""`, so the edit form re-sends every field (including web-only ones: meta, whats_in_box, video_url). Variants not in `variant_data` are deleted; omitting `variant_data` leaves them alone (the stock screen uses `product-variant/update/{id}` with just `stock`). Product categories must be leaf nodes.
+- **Orders** are per order *item* (`/order-item/*`); status flow pending → processing → shipped → delivered (or cancelled).
+- **Categories** use site-level permissions (`can('category:*')`), the rest use `canInShop(shopId, 'resource:action')`.
+- **Blogs** edit plain text only (`lib/format` converts to/from the backend's sanitised HTML; first line = title); the form warns when a web-authored post has rich formatting that would be flattened.

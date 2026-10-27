@@ -36,6 +36,12 @@
         }
       ],
       "expo-font",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow $(PRODUCT_NAME) to access your photos to add product, category and blog images."
+        }
+      ],
       "expo-image",
       "expo-status-bar",
       "expo-web-browser",
