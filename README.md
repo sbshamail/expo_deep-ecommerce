@@ -6,7 +6,7 @@ eas update --branch main --message "First update" //push code
 
 directly build and deploy to expo no expo app needed to run
 
-```bash
+````bash
 eas build -p android --profile preview // building, preview and download link
 --clear-cache //clear the cache
 #If You Want Faster Local Testing:
@@ -15,7 +15,14 @@ npx expo run:android --variant development
 rm -rf android ios .expo .expo-shared
 rm -rf ~/.gradle
 
-```
+
+# Install ADB without Android Studio
+```shell
+
+sudo apt update
+sudo apt install android-tools-adb
+
+````
 
 # Pull from Emulator
 
@@ -31,7 +38,7 @@ adb pull /data/app/~~9L0kpMFH6eyR75-HBfe32w==/com.hamail1223.opentravel-5L8TA4PM
 
 ```shell
 eas build:configure
-#local only work if android studio installed
+#local only work if adb installed
 eas build --local --platform android #Note: You need Android Studio + Android SDK + eas-cli installed
 --profile preview
 # for local builds.
