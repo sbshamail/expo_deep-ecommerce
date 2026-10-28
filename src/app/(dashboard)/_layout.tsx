@@ -14,7 +14,8 @@ export default function DashboardLayout() {
         headerShadowVisible: false,
         contentStyle: { backgroundColor: colors.background },
         headerBackTitle: "Back",
-      }}>
+      }}
+    >
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="product/[id]" options={{ title: "Product" }} />
       <Stack.Screen name="stock/[id]" options={{ title: "Manage stock" }} />

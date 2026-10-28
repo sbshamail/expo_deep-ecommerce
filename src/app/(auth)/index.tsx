@@ -1,7 +1,6 @@
-import AuthLayout from '@/common/auth/AuthLayout';
-import SigninForm from '@/common/signin/SigninForm';
-import Text from '@/components/ui/Text';
-import TextLink from '@/components/ui/TextLink';
+import AuthLayout from "@/common/auth/AuthLayout";
+import SigninForm from "@/common/signin/SigninForm";
+import TextLink from "@/components/ui/TextLink";
 
 export default function SigninScreen() {
   return (
@@ -11,11 +10,12 @@ export default function SigninScreen() {
       footer={
         <>
           <TextLink href="/forgot-password">Forgot password?</TextLink>
-          <Text variant="small" color="mutedForeground">
+          {/* <Text variant="small" color="mutedForeground" >
             No account? <TextLink href="/register">Register</TextLink>
-          </Text>
+          </Text> */}
         </>
-      }>
+      }
+    >
       <SigninForm />
     </AuthLayout>
   );
