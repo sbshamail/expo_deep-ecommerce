@@ -30,6 +30,14 @@ sudo apt install android-tools-adb
 adb shell pm path com.hamail1223.opentravel
 # package:/data/app/~~9L0kpMFH6eyR75-HBfe32w==/com.hamail1223.opentravel-5L8TA4PMJ8p7UvZX5nIW2w==/base.apk
 adb pull /data/app/~~9L0kpMFH6eyR75-HBfe32w==/com.hamail1223.opentravel-5L8TA4PMJ8p7UvZX5nIW2w==/base.apk ~/Downloads/OpenTravel.apk
+npx expo start --dev-client
+```
+
+# Install app in emulator with adb
+
+```shell
+adb devices
+adb install ~/Downloads/your-app.apk
 ```
 
 # build
