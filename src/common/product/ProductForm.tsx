@@ -4,6 +4,7 @@ import { ActivityIndicator, Alert } from "react-native";
 
 import { AIProductSuggestion } from "@/api/ai";
 import { flattenTree, listCategoryTree } from "@/api/categories";
+import { uploadMedia } from "@/api/blogs";
 import { ApiError } from "@/api/client";
 import { deleteProduct, readProduct, saveProduct } from "@/api/products";
 import Button from "@/components/ui/Button";
@@ -377,6 +378,12 @@ export default function ProductForm({ productId }: { productId: string }) {
           onChange={setDescription}
           placeholder="Product description"
           minHeight={140}
+          onUploadImage={async (image) => {
+            if (!token) throw new Error("Not signed in");
+            const form = new FormData();
+            appendImage(form, "files", image);
+            return (await uploadMedia(token, form)).original;
+          }}
         />
         <Input
           label="Tags (comma separated)"

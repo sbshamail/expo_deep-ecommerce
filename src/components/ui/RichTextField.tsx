@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useEffect, useRef, useState } from 'react';
-import { Pressable, ScrollView, View } from 'react-native';
+import { ActivityIndicator, Alert, Pressable, ScrollView, View } from 'react-native';
 import {
   EnrichedTextInput,
   type EnrichedTextInputInstance,
@@ -8,6 +8,7 @@ import {
 } from 'react-native-enriched-html';
 
 import { Radius, Spacing } from '@/constants/theme';
+import { PickedImage, pickImages } from '@/lib/images';
 import { useTheme } from '@/providers/theme/ThemeProvider';
 
 import Text from './Text';
@@ -37,6 +38,11 @@ interface RichTextFieldProps {
   onChange: (html: string) => void;
   placeholder?: string;
   minHeight?: number;
+  /**
+   * Adds an Image button to the toolbar. Uploads the picked photo and resolves
+   * to its public URL, which is what gets embedded in the HTML.
+   */
+  onUploadImage?: (image: PickedImage) => Promise<string>;
 }
 
 /**
@@ -51,11 +57,33 @@ export default function RichTextField({
   onChange,
   placeholder,
   minHeight = 110,
+  onUploadImage,
 }: RichTextFieldProps) {
   const { colors } = useTheme();
   const ref = useRef<EnrichedTextInputInstance>(null);
   const lastEmitted = useRef(value);
   const [state, setState] = useState<OnChangeStateEvent | null>(null);
+  const [uploading, setUploading] = useState(false);
+
+  const insertImage = async () => {
+    if (!onUploadImage || uploading) return;
+    const [picked] = await pickImages(1);
+    if (!picked) return;
+    setUploading(true);
+    try {
+      const src = await onUploadImage(picked);
+      // The native view needs a size to lay the image out; keep the aspect
+      // ratio but cap the width to something that fits a phone screen.
+      const w = picked.width || 300;
+      const h = picked.height || 300;
+      const width = Math.min(w, 300);
+      ref.current?.setImage(src, width, Math.round((h * width) / w));
+    } catch (e) {
+      Alert.alert('Image upload failed', e instanceof Error ? e.message : 'Please try again.');
+    } finally {
+      setUploading(false);
+    }
+  };
 
   useEffect(() => {
     if (value === lastEmitted.current) return;
@@ -121,6 +149,27 @@ export default function RichTextField({
               </Pressable>
             );
           })}
+          {onUploadImage ? (
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="image"
+              disabled={uploading}
+              onPress={insertImage}
+              style={{
+                minWidth: 36,
+                height: 34,
+                paddingHorizontal: 8,
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: Radius.sm,
+              }}>
+              {uploading ? (
+                <ActivityIndicator size="small" color={colors.foreground} />
+              ) : (
+                <Ionicons name="image-outline" size={20} color={colors.foreground} />
+              )}
+            </Pressable>
+          ) : null}
         </ScrollView>
         <EnrichedTextInput
           ref={ref}

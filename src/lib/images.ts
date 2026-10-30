@@ -5,12 +5,16 @@ export interface PickedImage {
   uri: string;
   name: string;
   type: string;
+  width?: number;
+  height?: number;
 }
 
 const toPicked = (a: ImagePicker.ImagePickerAsset): PickedImage => ({
   uri: a.uri,
   name: a.fileName ?? `photo-${Date.now()}.jpg`,
   type: a.mimeType ?? 'image/jpeg',
+  width: a.width,
+  height: a.height,
 });
 
 /** Opens the photo library. Resolves to [] when cancelled or denied. */
